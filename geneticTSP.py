@@ -157,13 +157,18 @@ def generateChildrenPopulation(parents, eliteSize):
 
     #guarantee that two different parents are selected
     numberOfGeneratedChildren = 0
-    while numberOfGeneratedChildren < len(parents) - eliteSize:
-        parent1 = random.choice(parents)
-        parent2 = random.choice(parents)
-        if parent1 != parent2:
-            children.append(orderCrossover(parent1, parent2))
-            numberOfGeneratedChildren += 1
-            print("number of generated children ", numberOfGeneratedChildren)
+
+    for i in range(0, len(parents) - 1):
+        for j in range(i + 1, len(parents)):
+            if numberOfGeneratedChildren == len(parents) - eliteSize:
+                break
+            elif parents[i] != parents[j]:
+                children.append(orderCrossover(parents[i], parents[j]))
+                numberOfGeneratedChildren += 1
+
+    if numberOfGeneratedChildren == 0:
+        print("only clones")
+        children = [parents[0]]
 
     print("children ", children)
 
@@ -228,6 +233,9 @@ def geneticTSP(G,populationSize, eliteSize, mutationRate, numberOfIterations):
 
     for i in range(0, numberOfIterations):
         population = newGeneration(G, population, eliteSize, mutationRate)
+        if len(population) == 1:
+            print("execute only number of iterations: ", i)
+            break
 
     fitness = allFitness(G, population)
     populationRank = sortRoutesByFitness(fitness)
