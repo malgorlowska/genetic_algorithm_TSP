@@ -109,7 +109,7 @@ def twoOpt(route,matrix):
 #kRandom(readFullMatrix(fullmatrix),10)
 #print(summOfRoutes(np.random.permutation(29),readFullMatrix(fullmatrix)))
 
-twoOpt(kRandom(readFullMatrix(fullmatrix),10)[1], fullmatrix)
+#twoOpt(kRandom(readFullMatrix(fullmatrix),10)[1], fullmatrix)
 
 #array = list(range(10))
 #twoOptInvert(array,4,7)

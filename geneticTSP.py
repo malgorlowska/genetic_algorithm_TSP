@@ -1,5 +1,7 @@
 from enum import Enum
 import random
+import matplotlib
+import matplotlib.pyplot as plt
 
 from graph import GenerateGraph
 import numpy as np
@@ -11,7 +13,7 @@ def createInitialPopulation(graph, populationSize):
     for i in range (0, populationSize):
         population.append(graph.random_method()) #dodać wybieranie pomiędzy random, k_random a two_optem
         #w dalszej części rozwoju programu dodać wyspy z populacjami
-    print("initial population: ", population)
+    #print("initial population: ", population)
 
     return population
 
@@ -28,7 +30,7 @@ def allFitness(graph, population):
         if fitness[i] != 0:
             fitness[i] = 1 / fitness[i]
 
-    print("fitness ", fitness)
+    #print("fitness ", fitness)
     return fitness
 
 def sortRoutesByFitness(fitness):
@@ -37,7 +39,7 @@ def sortRoutesByFitness(fitness):
     #przy obecnym sposobie selekcji niepotrzebne jest sortowanie jeśli
     #nie przenosimy elity w ruletce
     routesAndFitness.sort(key=lambda a: a[1], reverse = True)
-    print("sorted list ", routesAndFitness)
+    #print("sorted list ", routesAndFitness)
 
     return routesAndFitness
 
@@ -45,11 +47,11 @@ def roulette(routesRank, eliteSize):
     selection = []
     probabilityOfChoice = np.zeros(len(routesRank))
     sumOfFitness = sum(n for _, n in routesRank)
-    print("sumOfFitness ", sumOfFitness)
+    #print("sumOfFitness ", sumOfFitness)
     for i in range(0, len(routesRank)):
         probabilityOfChoice[i] = 100 * routesRank[i][1] / sumOfFitness
 
-    print("probability ", probabilityOfChoice)
+    #print("probability ", probabilityOfChoice)
     #dzięki temu, że sortowaliśmy to tu przenosimy najlepszych
     #chosing elite - testować czy przydatne
     for i in range(0, eliteSize):
@@ -57,19 +59,19 @@ def roulette(routesRank, eliteSize):
 
     for i in range(0, len(routesRank) - eliteSize):
         randomNumber = random.randrange(100) #number in range(1-100)
-        print("randomNumber ", randomNumber)
+        #print("randomNumber ", randomNumber)
         sumator = 0
         #czy należy ograniczyć wybieranie tych samych?
         for i in range(0, len(routesRank)):
             sumator += probabilityOfChoice[i]
-            print("sumator ", sumator)
+            #print("sumator ", sumator)
             if randomNumber >= (100 - sumator):#sprawdzić wartości graniczne
                 selection.append(routesRank[i][0])
-                print("add ", routesRank[i])
+                #print("add ", routesRank[i])
                 sumator = 0
                 break
 
-    print("selection ", selection)
+    #print("selection ", selection)
 
     return selection
 
@@ -78,7 +80,7 @@ def getParents(population, selectionIndexes):
     for i in range(0, len(selectionIndexes)):
         parents.append(population[selectionIndexes[i]])
 
-    print("parents ", parents)
+    #print("parents ", parents)
 
     return parents
 
@@ -92,16 +94,16 @@ def tournament():
 #step 3
 #crossover
 def orderCrossover(route1, route2):
-    print("parent1 ", route1)
-    print("parent2 ", route2)
+    #print("parent1 ", route1)
+    #print("parent2 ", route2)
     #zastanowić się czy generujemy 1 czy 2 dzieci
     children = []
     startSubstring = random.randint(1, len(route1)-3)
-    print("startSubstring ", startSubstring)
+    #print("startSubstring ", startSubstring)
     endSubstring = random.randint(startSubstring + 1, (len(route1)-2)) #sprawdzić dla wartości granicznych
-    print("endSubstring ", endSubstring)
+    #print("endSubstring ", endSubstring)
     substring1 = route1[startSubstring:(endSubstring+1)]
-    print("substring1 ", substring1)
+    #print("substring1 ", substring1)
     child1 = []
     child2 = []
 
@@ -113,14 +115,14 @@ def orderCrossover(route1, route2):
             child1.append(route2[l])
             numberOfAddedCities += 1
         l += 1
-    print("child1 ", child1)
+    #print("child1 ", child1)
     child1 = child1 + substring1
     for i in range(l + 1, len(route2)):
         if not route2[i] in substring1:
             child1.append(route2[i])
     numberOfAddedCities = 0
     l = 0
-    print("child1 ", child1)
+    #print("child1 ", child1)
 
     #generate child2
     # substring2 = route2[startSubstring:(endSubstring+1)]
@@ -167,10 +169,10 @@ def generateChildrenPopulation(parents, eliteSize):
                 numberOfGeneratedChildren += 1
 
     if numberOfGeneratedChildren == 0:
-        print("only clones")
+        #print("only clones")
         children = [parents[0]]
 
-    print("children ", children)
+    #print("children ", children)
 
     return children
 
@@ -181,14 +183,14 @@ def generateChildrenPopulation(parents, eliteSize):
 def mutateByInvert(individual, mutationRate):
     new_individual = individual
     if(random.random() <= mutationRate):
-        print("mutation on ", individual)
+        #print("mutation on ", individual)
         start = random.randint(0, len(individual)-2)
-        print("start mutation index ", start)
+        #print("start mutation index ", start)
         end = random.randint(start + 1, (len(individual)-1))
-        print("end mutation index ", end)
+        #print("end mutation index ", end)
         #new_individual = individual[:]
         new_individual[start:end+1] = reversed(new_individual[start:end+1])
-        print("individual after mutation ", new_individual)
+        #print("individual after mutation ", new_individual)
 
     return new_individual
 
@@ -199,26 +201,26 @@ def mutatePopulation(population, mutationRate):
         mutated = mutateByInvert(population[i], mutationRate)
         mutatedPopulation.append(mutated)
 
-    print("mutatedPopulation ", mutatedPopulation)
+    #print("mutatedPopulation ", mutatedPopulation)
     return mutatedPopulation
 
 #step 5
 #stop condition
 def newGeneration(G, generation, eliteSize, mutationRate):
-    print("fitnessList")
+    #print("fitnessList")
     fitnessList = allFitness(G, generation)
-    print(fitnessList)
+    #print(fitnessList)
     routeRank = sortRoutesByFitness(fitnessList)
-    print("sorted list")
-    print(routeRank)
+    #print("sorted list")
+    #print(routeRank)
     selection = roulette(routeRank, eliteSize)
-    print("parents")
+    #print("parents")
     parents = getParents(generation, selection)
-    print(parents)
-    print("children")
+    #print(parents)
+    #print("children")
     childrensPopulation = generateChildrenPopulation(parents, eliteSize)
-    print("children ", childrensPopulation)
-    print("mutation")
+    #print("children ", childrensPopulation)
+    #print("mutation")
     mutatedPopulation = mutatePopulation(childrensPopulation, mutationRate)
 
     return mutatedPopulation
@@ -230,17 +232,27 @@ def geneticTSP(G,populationSize, eliteSize, mutationRate, numberOfIterations):
     initialDistance = 1 / initialPopulationRank[0][1]
     print("Initial distance: ", initialDistance)
     population = initialPopulation
+    distanceList = []
 
     for i in range(0, numberOfIterations):
         population = newGeneration(G, population, eliteSize, mutationRate)
+        fitness = allFitness(G, population)
+        populationRank = sortRoutesByFitness(fitness)
+        currentDistance = 1 / populationRank[0][1]
+        distanceList.append(currentDistance)
+        print(currentDistance)
         if len(population) == 1:
             print("execute only number of iterations: ", i)
             break
 
-    fitness = allFitness(G, population)
-    populationRank = sortRoutesByFitness(fitness)
-    finalDistance = 1 / populationRank[0][1]
-    print("Final distance: ", finalDistance)
+    #fitness = allFitness(G, population)
+    #populationRank = sortRoutesByFitness(fitness)
+    #finalDistance = 1 / populationRank[0][1]
+    #print("Final distance: ", finalDistance)
     bestPath = population[populationRank[0][0]]
+    plt.figure()
+    plt.plot(distanceList)
+    plt.xlabel("population: " + str(populationSize) + "elite: " + str(eliteSize) + "mutation: " + str(mutationRate) + "iter: " + str(numberOfIterations))
+    plt.savefig('plots/' + "p" + str(populationSize) + "e" + str(eliteSize) + "m" + str(mutationRate) + "i" + str(numberOfIterations) + '.png')
 
     return bestPath
