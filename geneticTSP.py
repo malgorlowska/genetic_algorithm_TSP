@@ -154,8 +154,8 @@ def generateChildrenPopulation(parents, eliteSize):
 
     #adding elite from parent's population to children's population
     #czy tu też przenosić elitę?
-    for i in range(0,eliteSize):
-        children.append(parents[i])
+    #for i in range(0,eliteSize):
+        #children.append(parents[i])
 
     #guarantee that two different parents are selected
     numberOfGeneratedChildren = 0
@@ -168,9 +168,18 @@ def generateChildrenPopulation(parents, eliteSize):
                 children.append(orderCrossover(parents[i], parents[j]))
                 numberOfGeneratedChildren += 1
 
-    if numberOfGeneratedChildren == 0:
-        #print("only clones")
-        children = [parents[0]]
+    #poniżej dopełnienie generacji dzieci generacją rodziców
+    #ogromny wpływ na wyniki
+    #pytanie gdzie dopełniać i w jaki sposób?
+    parentIndex = len(parents) - 1
+    while numberOfGeneratedChildren < len(parents):
+        children.append(parents[parentIndex])
+        parentIndex -= 1
+        numberOfGeneratedChildren += 1
+        
+    # if numberOfGeneratedChildren == 0:
+    #     #print("only clones")
+    #     children = [parents[0]]
 
     #print("children ", children)
 
@@ -194,13 +203,37 @@ def mutateByInvert(individual, mutationRate):
 
     return new_individual
 
-def mutatePopulation(population, mutationRate):
+def two_opt(graph, individual):
+    path = individual
+    best = path
+    numberOfIteration = 5
+    while numberOfIteration > 0:
+        i = random.randint(0, len(path)-2) #len(path)-1)
+        j = random.randint(i + 1, (len(individual)-1)) #len(path)
+        if j-i == 1: continue
+        new_route = path[:]
+        new_route[i:j] = reversed(new_route[i:j])
+        if graph.cost(new_route) < graph.cost(best):
+            best = new_route
+        path = best
+        numberOfIteration -= 1
+    return path
+
+def repairWith2OPT(graph, individual):
+    new_individual = two_opt(graph, individual)
+    return new_individual
+
+def mutatePopulation(graph, population, mutationRate):
     mutatedPopulation = []
 
     for i in range(0, len(population)):
         mutated = mutateByInvert(population[i], mutationRate)
         mutatedPopulation.append(mutated)
 
+    #two individuals will be improving by 2opt
+    #można wyłączyć opcję i sprawdzić różnicę
+    mutatedPopulation[0] = repairWith2OPT(graph, mutatedPopulation[0])
+    mutatedPopulation[1] = repairWith2OPT(graph, mutatedPopulation[1])
     #print("mutatedPopulation ", mutatedPopulation)
     return mutatedPopulation
 
@@ -221,7 +254,7 @@ def newGeneration(G, generation, eliteSize, mutationRate):
     childrensPopulation = generateChildrenPopulation(parents, eliteSize)
     #print("children ", childrensPopulation)
     #print("mutation")
-    mutatedPopulation = mutatePopulation(childrensPopulation, mutationRate)
+    mutatedPopulation = mutatePopulation(G, childrensPopulation, mutationRate)
 
     return mutatedPopulation
 
