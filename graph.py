@@ -27,6 +27,7 @@ class GenerateGraph:
                         row.append(random.randint(1,self.upper_bound))
                 self.matrix.append(row)
 
+
         elif(self.variant=='EUC_2D'):
             for i in range(self.dimension):
                 row=[]

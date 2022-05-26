@@ -2,25 +2,25 @@ from enum import Enum
 import random
 import matplotlib
 import matplotlib.pyplot as plt
-
-from graph import GenerateGraph
 import numpy as np
+from graph import GenerateGraph
 
 #step 1
 #creating initial population
 def createInitialPopulation(graph, populationSize):
     population = []
     for i in range (0, populationSize):
-        population.append(graph.random_method()) #dodać wybieranie pomiędzy random, k_random a two_optem
+        population.append(GenerateGraph.random_method(graph)) #dodać wybieranie pomiędzy random, k_random a two_optem
         #w dalszej części rozwoju programu dodać wyspy z populacjami
     #print("initial population: ", population)
-
     return population
 
 #step 2
 #evaluating and selection
 
 #creating list of reversing costs of distance
+
+
 def allFitness(graph, population):
     fitness = np.zeros(len(population))
     for i in range(0, len(population)):
@@ -98,7 +98,7 @@ def orderCrossover(route1, route2):
     #print("parent2 ", route2)
     #zastanowić się czy generujemy 1 czy 2 dzieci
     children = []
-    startSubstring = random.randint(1, len(route1)-3)
+    startSubstring = random.randint(1, (len(route1)-3))
     #print("startSubstring ", startSubstring)
     endSubstring = random.randint(startSubstring + 1, (len(route1)-2)) #sprawdzić dla wartości granicznych
     #print("endSubstring ", endSubstring)
@@ -283,9 +283,9 @@ def geneticTSP(G,populationSize, eliteSize, mutationRate, numberOfIterations):
     #finalDistance = 1 / populationRank[0][1]
     #print("Final distance: ", finalDistance)
     bestPath = population[populationRank[0][0]]
-    plt.figure()
-    plt.plot(distanceList)
-    plt.xlabel("population: " + str(populationSize) + "elite: " + str(eliteSize) + "mutation: " + str(mutationRate) + "iter: " + str(numberOfIterations))
-    plt.savefig('plots/' + "p" + str(populationSize) + "e" + str(eliteSize) + "m" + str(mutationRate) + "i" + str(numberOfIterations) + '.png')
-
+    #plt.figure()
+    #plt.plot(distanceList)
+    #plt.xlabel("population: " + str(populationSize) + "elite: " + str(eliteSize) + "mutation: " + str(mutationRate) + "iter: " + str(numberOfIterations))
+    #plt.savefig('plots/' + "p" + str(populationSize) + "e" + str(eliteSize) + "m" + str(mutationRate) + "i" + str(numberOfIterations) + '.png')
+    print(bestPath)
     return bestPath
