@@ -1,5 +1,7 @@
 
 import sys
+
+import graph
 from graph import GenerateGraph
 import geneticTSP
 import readFile
@@ -30,9 +32,9 @@ def main():
      G = read.Graph("berlin52.tsp")
      print("generated graph: ")
      print(G)
-
+     #print("koszt ", G.cost([5, 27, 0, 7, 23, 15, 26, 22, 6, 24, 10, 21, 13, 16, 17, 14, 18, 12, 3, 9, 19, 1, 20, 4, 2, 28, 25, 8, 11]))
      #odkomentuj to zamiast linijki
-     geneticTSP.geneticTSP(G, 50, 6, 0.05, 250)
+     geneticTSP.geneticTSP(G, 50, 6, 0.05, 200)
      """
      print("initial population")
      initialPopulation = geneticTSP.createInitialPopulation(G, 5)
