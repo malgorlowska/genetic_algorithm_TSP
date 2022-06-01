@@ -1,6 +1,4 @@
-from enum import Enum
 import random
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from graph import GenerateGraph
@@ -51,6 +49,12 @@ def roulette(routesRank, eliteSize):
     for i in range(0, len(routesRank)):
         probabilityOfChoice[i] = 100 * routesRank[i][1] / sumOfFitness
 
+    # sumOfProbabilty = 0
+    # for i in range(0, len(probabilityOfChoice)):
+    #     sumOfProbabilty += probabilityOfChoice[i]
+    #
+    # print("suma prawdopodobieństwa ", sumOfProbabilty)
+
     #print("probability ", probabilityOfChoice)
     #dzięki temu, że sortowaliśmy to tu przenosimy najlepszych
     #chosing elite - testować czy przydatne
@@ -58,20 +62,21 @@ def roulette(routesRank, eliteSize):
          selection.append(routesRank[i][0])
 
     for i in range(0, len(routesRank) - eliteSize):
-        randomNumber = random.randrange(100) #number in range(1-100)
+        randomNumber = random.randrange(100) #number in range(0-99)
         #print("randomNumber ", randomNumber)
         sumator = 0
         #czy należy ograniczyć wybieranie tych samych?
         for i in range(0, len(routesRank)):
             sumator += probabilityOfChoice[i]
             #print("sumator ", sumator)
-            if randomNumber >= (100 - sumator):#sprawdzić wartości graniczne
+            if randomNumber <= (sumator):#sprawdzić wartości graniczne
                 selection.append(routesRank[i][0])
                 #print("add ", routesRank[i])
                 sumator = 0
                 break
 
-    #print("selection ", selection)
+    #print("routesRank size ", len(routesRank))
+    #print("selection size", len(selection))
 
     return selection
 
@@ -96,6 +101,7 @@ def tournament():
 def orderCrossover(route1, route2):
     #print("parent1 ", route1)
     #print("parent2 ", route2)
+    #print("dlugosc rodzica 1 ", len(route1))
     #zastanowić się czy generujemy 1 czy 2 dzieci
     children = []
     startSubstring = random.randint(1, (len(route1)-3))
@@ -117,12 +123,14 @@ def orderCrossover(route1, route2):
         l += 1
     #print("child1 ", child1)
     child1 = child1 + substring1
-    for i in range(l + 1, len(route2)):
+    #print("child1 after adding sub ", child1)
+    for i in range(l , len(route2)): #tu był błąd
         if not route2[i] in substring1:
             child1.append(route2[i])
     numberOfAddedCities = 0
     l = 0
     #print("child1 ", child1)
+    #print("długosc dziecka ", len(child1))
 
     #generate child2
     # substring2 = route2[startSubstring:(endSubstring+1)]
@@ -149,13 +157,13 @@ def orderCrossover(route1, route2):
 # route2 = [5,1,3,6,4,2]
 # orderCrossover(route1, route2)
 
-def generateChildrenPopulation(parents, eliteSize):
+def generateChildrenPopulation(graph, parents, eliteSize):
     children = []
 
     #adding elite from parent's population to children's population
     #czy tu też przenosić elitę?
-    #for i in range(0,eliteSize):
-        #children.append(parents[i])
+    for i in range(0,eliteSize):
+         children.append(parents[i])
 
     #guarantee that two different parents are selected
     numberOfGeneratedChildren = 0
@@ -168,13 +176,19 @@ def generateChildrenPopulation(parents, eliteSize):
                 children.append(orderCrossover(parents[i], parents[j]))
                 numberOfGeneratedChildren += 1
 
+    if numberOfGeneratedChildren < (len(parents) - eliteSize):
+        print("brakuje osobnikow: ", len(parents) - numberOfGeneratedChildren)
     #poniżej dopełnienie generacji dzieci generacją rodziców
     #ogromny wpływ na wyniki
-    #pytanie gdzie dopełniać i w jaki sposób?
-    parentIndex = len(parents) - 1
-    while numberOfGeneratedChildren < len(parents):
-        children.append(parents[parentIndex])
-        parentIndex -= 1
+    # parentIndex = len(parents) - 1
+    # while numberOfGeneratedChildren < (len(parents) - eliteSize):
+    #     children.append(parents[parentIndex])
+    #     parentIndex -= 1
+    #     numberOfGeneratedChildren += 1
+    #poniżej drugi sposób dopełniania generacji dzieci
+    #tutaj losowymiosobnikami, lepiej zabijać osobniki ktore często przechodzą
+    while numberOfGeneratedChildren < (len(parents) - eliteSize):
+        children.append(GenerateGraph.random_method(graph))
         numberOfGeneratedChildren += 1
         
     # if numberOfGeneratedChildren == 0:
@@ -203,10 +217,30 @@ def mutateByInvert(individual, mutationRate):
 
     return new_individual
 
+def mutateByTwoSwaps(individual, mutationRate):
+    new_individual = individual
+    if(random.random() <= mutationRate):
+        #print("mutation on ", individual)
+        start = random.randint(0, len(individual)-2)
+        #print("start mutation index ", start)
+        end = random.randint(start + 1, (len(individual)-1))
+        #print("end mutation index ", end)
+        #new_individual = individual[:]
+        new_individual[start], new_individual[end] = new_individual[end], new_individual[start]
+        #print("individual after mutation ", new_individual)
+        start = random.randint(0, len(individual)-2)
+        #print("start mutation index ", start)
+        end = random.randint(start + 1, (len(individual)-1))
+        #print("end mutation index ", end)
+        #new_individual = individual[:]
+        new_individual[start], new_individual[end] = new_individual[end], new_individual[start]
+
+    return new_individual
+
 def two_opt(graph, individual):
     path = individual
     best = path
-    numberOfIteration = 5
+    numberOfIteration = int(0.30*len(path))
     while numberOfIteration > 0:
         i = random.randint(0, len(path)-2) #len(path)-1)
         j = random.randint(i + 1, (len(individual)-1)) #len(path)
@@ -227,7 +261,8 @@ def mutatePopulation(graph, population, mutationRate):
     mutatedPopulation = []
 
     for i in range(0, len(population)):
-        mutated = mutateByInvert(population[i], mutationRate)
+        mutated = mutateByTwoSwaps(population[i], mutationRate)
+        #mutated = mutateByInvert(population[i], mutationRate)
         mutatedPopulation.append(mutated)
 
     #two individuals will be improving by 2opt
@@ -245,18 +280,20 @@ def newGeneration(G, generation, eliteSize, mutationRate):
     #print(fitnessList)
     routeRank = sortRoutesByFitness(fitnessList)
     #print("sorted list")
-    #print(routeRank)
+    #print(" routeRank size ", len(routeRank))
     selection = roulette(routeRank, eliteSize)
-    #print("parents")
+    #print("selectionSize ", len(selection))
     parents = getParents(generation, selection)
+    #print("parents population size ", len(parents))
     #print(parents)
     #print("children")
-    childrensPopulation = generateChildrenPopulation(parents, eliteSize)
+    childrensPopulation = generateChildrenPopulation(G, parents, eliteSize)
+    #print("childrens population size ", len(childrensPopulation))
     #print("children ", childrensPopulation)
     #print("mutation")
     mutatedPopulation = mutatePopulation(G, childrensPopulation, mutationRate)
 
-    return mutatedPopulation
+    return mutatedPopulation, routeRank
 
 def geneticTSP(G,populationSize, eliteSize, mutationRate, numberOfIterations):
     initialPopulation = createInitialPopulation(G, populationSize)
@@ -268,11 +305,14 @@ def geneticTSP(G,populationSize, eliteSize, mutationRate, numberOfIterations):
     distanceList = []
 
     for i in range(0, numberOfIterations):
-        population = newGeneration(G, population, eliteSize, mutationRate)
-        fitness = allFitness(G, population)
-        populationRank = sortRoutesByFitness(fitness)
+        population, populationRank = newGeneration(G, population, eliteSize, mutationRate)
+        #print("iteracja ", i)
+        #print("rozmiar pierwszego z populacji: ", len(population[0]))
+        #fitness = allFitness(G, population)
+        #populationRank = sortRoutesByFitness(fitness)
         currentDistance = 1 / populationRank[0][1]
         distanceList.append(currentDistance)
+        #print("population size ", len(population))
         print(currentDistance)
         if len(population) == 1:
             print("execute only number of iterations: ", i)
@@ -283,9 +323,10 @@ def geneticTSP(G,populationSize, eliteSize, mutationRate, numberOfIterations):
     #finalDistance = 1 / populationRank[0][1]
     #print("Final distance: ", finalDistance)
     bestPath = population[populationRank[0][0]]
-    #plt.figure()
-    #plt.plot(distanceList)
-    #plt.xlabel("population: " + str(populationSize) + "elite: " + str(eliteSize) + "mutation: " + str(mutationRate) + "iter: " + str(numberOfIterations))
-    #plt.savefig('plots/' + "p" + str(populationSize) + "e" + str(eliteSize) + "m" + str(mutationRate) + "i" + str(numberOfIterations) + '.png')
+    plt.figure()
+    plt.plot(distanceList)
+    plt.xlabel("population: " + str(populationSize) + "elite: " + str(eliteSize) + "mutation: " + str(mutationRate) + "iter: " + str(numberOfIterations))
+    plt.savefig('plots/' + "p" + str(populationSize) + "e" + str(eliteSize) + "m" + str(mutationRate) + "i" + str(numberOfIterations) + '.png')
     print(bestPath)
+    print(len(bestPath))
     return bestPath

@@ -32,7 +32,7 @@ def main():
      print(G)
 
      #odkomentuj to zamiast linijki
-     geneticTSP.geneticTSP(G, 10, 3, 0.05, 50)
+     geneticTSP.geneticTSP(G, 50, 6, 0.05, 250)
      """
      print("initial population")
      initialPopulation = geneticTSP.createInitialPopulation(G, 5)
