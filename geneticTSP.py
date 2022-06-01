@@ -1,6 +1,8 @@
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy.random import randint
+
 from graph import GenerateGraph
 
 
@@ -85,6 +87,26 @@ def roulette(routesRank, eliteSize):
     return selection
 
 
+def tournament(routesRank, k):
+    contestant = randint(len(routesRank) - 1)
+    for i in range(0, k):
+        contestant2 = randint(len(routesRank) - 1)
+        if routesRank[contestant2][1] < routesRank[contestant][1]:
+            contestant = contestant2
+
+    return routesRank[contestant][0]
+
+
+def tournamentSelection(routesRank, eliteSize, k):
+    selection = []
+    for i in range(0, eliteSize):
+        selection.append(routesRank[i][0])
+
+    for i in range(0, len(routesRank) - eliteSize):
+        selection.append(tournament(routesRank, k))
+    return selection
+
+
 def getParents(population, selectionIndexes):
     parents = []
     for i in range(0, len(selectionIndexes)):
@@ -93,10 +115,6 @@ def getParents(population, selectionIndexes):
     # print("parents ", parents)
 
     return parents
-
-
-def tournament():
-    pass
 
 
 # def selection(Enum):
@@ -160,12 +178,15 @@ def orderCrossover(route1, route2):
 
     return child1
 
+
 import random
+
+
 def partiallyMappedCrossover(route1, route2):
     startSubstring = random.randint(1, (len(route1) - 3))
-    #print("startSubstring ", startSubstring)
+    # print("startSubstring ", startSubstring)
     endSubstring = random.randint(startSubstring + 1, (len(route1) - 2))  # sprawdzić dla wartości granicznych
-    #print("endSubstring ", endSubstring)
+    # print("endSubstring ", endSubstring)
     child1 = [0] * len(route1)
     replacement1 = [-1] * len(route1)
 
@@ -192,6 +213,7 @@ def partiallyMappedCrossover(route1, route2):
 
     return child1
 
+
 # p1 = [2, 5, 1, 6, 4, 0, 8, 7, 3]
 # p2 = [3, 1, 7, 5, 8, 4, 0, 6, 2]
 # partiallyMappedCrossover(p1, p2)
@@ -214,7 +236,7 @@ def generateChildrenPopulation(graph, parents, eliteSize):
                 break
             elif parents[i] != parents[j]:
                 children.append(orderCrossover(parents[i], parents[j]))
-                #children.append(partiallyMappedCrossover(parents[i], parents[j]))
+                # children.append(partiallyMappedCrossover(parents[i], parents[j]))
                 numberOfGeneratedChildren += 1
 
     # drugi sposób wyboru rodziców do krzyżowania
@@ -325,7 +347,7 @@ def mutatePopulation(graph, population, mutationRate):
     mutatedPopulation = []
 
     for i in range(0, len(population)):
-        #mutated = mutateByTwoSwaps(population[i], mutationRate)
+        # mutated = mutateByTwoSwaps(population[i], mutationRate)
         mutated = mutateByInvert(population[i], mutationRate)
         mutatedPopulation.append(mutated)
 
@@ -346,7 +368,9 @@ def newGeneration(G, generation, eliteSize, mutationRate):
     routeRank = sortRoutesByFitness(fitnessList)
     # print("sorted list")
     # print(" routeRank size ", len(routeRank))
-    selection = roulette(routeRank, eliteSize)
+    #selection = roulette(routeRank, eliteSize)
+    k = int(len(routeRank) / 4) #zastanowić się nad doborem parametru
+    selection = tournamentSelection(routeRank, eliteSize, k)
     # print("selectionSize ", len(selection))
     parents = getParents(generation, selection)
     # print("parents population size ", len(parents))
