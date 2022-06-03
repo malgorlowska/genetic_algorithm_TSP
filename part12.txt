@@ -1,0 +1,18 @@
+part1
+
+populationList = [20, 30, 40]
+        eliteList = [4,6,8]
+        mutationRateList = [0.01, 0.02, 0.03]
+        iterations = [70, 90, 110]
+        muteTab = [0,1]
+        crossTab = [0,1]
+        selectTab = [0,1]
+
+part2
+    populationList = [30, 40, 50]
+              eliteList = [6,8,10]
+              mutationRateList = [0.01, 0.02, 0.03]
+              iterations = [100, 120, 140]
+              muteTab = [0,1]
+              crossTab = [0,1]
+              selectTab = [0,1]

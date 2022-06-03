@@ -1,0 +1,1 @@
+Best result for: lin105.tsp Cost: 18643 Prd: 24.777458001472457 Parameters: [105, 34, 0.03, 150, 1, 0, 0]

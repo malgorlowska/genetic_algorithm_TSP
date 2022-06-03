@@ -1,0 +1,1 @@
+Best result for: berlin52.tsp Cost: 7905 Prd: 4.813046937151949 Parameters: [30, 4, 0.02, 110, 0, 0, 1]

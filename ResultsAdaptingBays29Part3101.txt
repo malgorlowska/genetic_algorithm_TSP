@@ -1,0 +1,1 @@
+Best result for: bays29.tsp Cost: 2092 Prd: 0.7590132827324478 Parameters: [29, 10, 0.03, 150, 1, 0, 1]

@@ -16,7 +16,7 @@ class Graph:
     edge_weight_format = ""
 
     header = dict()
-    optimal={"br17.atsp": 39, "gr24.tsp": 1278,"bays29.tsp": 2108,"berlin52.tsp": 7542,"eil76.tsp": 570,"eil101.tsp: 3187": 2918, "lin105.tsp": 14941, "gr120.tsp": 6942}
+    optimal={"br17.atsp": 39, "gr24.tsp": 1278,"bays29.tsp": 2108,"berlin52.tsp": 7542,"eil76.tsp": 570,"eil101.tsp": 2918, "lin105.tsp": 14941, "gr120.tsp": 6942, "ftv44.atsp": 1613, "ftv70.atsp": 1950, "kro124p.atsp": 36230}
     matrix = []
     coordinates = dict()
     path = []
@@ -29,7 +29,7 @@ class Graph:
             "LOWER_DIAG_ROW": self.read_data_from_lower_diag_row
         }
         self.read()
-        self.show_matrix()
+        #self.show_matrix()
         #self.show_solution()
         #print("długosc testowa")
 
@@ -336,7 +336,8 @@ class Graph:
     def PRD(self,x):
         ref=self.optimal[self.filename]
         result=100*(x-ref)/ref
-        print("PRD(x):{}%".format(result))
+        #print("PRD(x):{}%".format(result))
+        return result
 
     @staticmethod
     def read_numbers(file):

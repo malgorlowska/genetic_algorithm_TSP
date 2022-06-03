@@ -1,0 +1,1 @@
+Best result for: gr120.tsp Cost: 9118 Prd: 31.345433592624605 Parameters: [120, 40, 0.03, 150, 0, 1, 1]

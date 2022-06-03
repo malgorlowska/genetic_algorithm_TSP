@@ -1,0 +1,1 @@
+Best result for: eil76.tsp Cost: 631 Prd: 10.701754385964913 Parameters: [76, 25, 0.03, 150, 1, 0, 0]

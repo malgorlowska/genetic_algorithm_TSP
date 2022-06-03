@@ -1,7 +1,5 @@
 
 import sys
-
-import graph
 from graph import GenerateGraph
 import geneticTSP
 import readFile
@@ -29,44 +27,60 @@ import read
 #     print("main.py analyze random <filename>")
 
 def main():
-     G = read.Graph("berlin52.tsp")
-     print("generated graph: ")
-     print(G)
-     #print("koszt ", G.cost([5, 27, 0, 7, 23, 15, 26, 22, 6, 24, 10, 21, 13, 16, 17, 14, 18, 12, 3, 9, 19, 1, 20, 4, 2, 28, 25, 8, 11]))
-     #odkomentuj to zamiast linijki
-     geneticTSP.geneticTSP(G, 50, 6, 0.05, 200)
-     """
-     print("initial population")
-     initialPopulation = geneticTSP.createInitialPopulation(G, 5)
-     print("fitness")
-     fitnessList = geneticTSP.allFitness(G, initialPopulation)
-     print("sorted list")
-     routeRank = geneticTSP.sortRoutesByFitness(fitnessList)
-     print("selection")
-     selection = geneticTSP.roulette(routeRank, 2)
-     print("parents")
-     parents = geneticTSP.getParents(initialPopulation, selection)
-     print("children")
-     childrensPopulation = geneticTSP.generateChildrenPopulation(parents, 1)
-     print("mutation")
-     mutatedPopulation = geneticTSP.mutatePopulation(childrensPopulation, 0.05)
-     """
-     populationList = [5, 10, 15, 20, 25, 30]
-     eliteList = [0,1,2,3,4,5]
-     mutationRateList = [0.01, 0.02, 0.03, 0.04, 0.05, 0.06]
-     iterations = [10, 20, 30, 40, 50, 60]
-"""
-     for i in range(6):
-          population = populationList[i]
-          for j in range(6):
-              elite = eliteList[j]
-              for k in range(6):
-                   mutation = mutationRateList[k]
-                   for l in range(6):
-                        it = iterations[l]
 
-                        #print(population,elite,mutation,it)
 
-                        geneticTSP.geneticTSP(G, population, elite, mutation, it)
-"""
+
+     try:
+          files = ["bays29.tsp", "berlin52.tsp", "eil76.tsp", "eil101.tsp", "lin105.tsp", "gr120.tsp"]
+          populationList = [29]
+          eliteList = [10]
+          mutationRateList = [0.03]
+          iterations = [150]
+          muteTab = [0,1]
+          crossTab = [0,1]
+          selectTab = [0,1]
+
+
+          baysBest=berlinBest= eilBest= eil2Best= linBest= gr2Best = 1000000000
+          baysPrd=berlinPrd= eilPrd= eil2Prd= linPrd= gr2Prd = 101
+          arr0 = arr1 = arr2 = arr3 = arr4 = arr5 = [0,0,0,0,0,0,0]
+          file0 = files[0]
+
+          for i in range(len(populationList)):
+               population = populationList[i]
+               for j in range(len(eliteList)):
+                   elite = eliteList[j]
+                   for k in range(len(mutationRateList)):
+                        mutation = mutationRateList[k]
+                        for l in range(len(iterations)):
+                             it = iterations[l]
+                             for m in range(len(muteTab)):
+                                  mutationType = muteTab[m]
+                                  for n in range(len(crossTab)):
+                                       crossType = crossTab[n]
+                                       for o in range(len(selectTab)):
+                                            selectType = selectTab[o]
+
+
+
+                                            G = read.Graph(file0)
+                                            bestPath, prd, cost = geneticTSP.geneticTSP(G, population, elite, mutation,it, selectType, mutationType, crossType)
+
+
+                                            baysBest = cost
+
+                                            baysPrd = prd
+                                            arr0 = [populationList[i],eliteList[j],mutationRateList[k],iterations[l],m,n,o]
+
+
+
+                                            print("Best result for: " + str(files[0]) + " Cost: " + str(baysBest) + " Prd: " + str(baysPrd) + " Parameters: " + str(arr0))
+                                            f = open("ResultsAdaptingBays29Part3" + str(m) + str(n) + str(o) + ".txt", "x")
+                                            f.write("Best result for: " + str(files[0]) + " Cost: " + str(baysBest) + " Prd: " + str(baysPrd) + " Parameters: " + str(arr0))
+                                            f.close()
+
+
+     except:
+          pass
+
 main()

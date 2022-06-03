@@ -1,0 +1,1 @@
+Best result for: eil101.tsp Cost: 721 Prd: 75.29129540781356 Parameters: [101, 33, 0.03, 150, 1, 0, 1]
