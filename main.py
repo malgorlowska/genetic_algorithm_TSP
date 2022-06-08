@@ -28,7 +28,7 @@ import read
 
 def main():
      G = read.Graph("berlin52.tsp")
-     bestPath, prd, cost = geneticTSP.geneticTSP(G, 50, 6, 0.05, 200, 2, 0, 1)
+     bestPath, prd, cost = geneticTSP.geneticTSP(G, 50, 6, 0.05, 200, 2, 0, 2)
 
      '''''
      try:

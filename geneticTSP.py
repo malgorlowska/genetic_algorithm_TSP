@@ -194,9 +194,37 @@ def orderCrossover(route1, route2):
 
     return child1
 
+# import random
+def positionCrossover(route1, route2):
+    # print("parent1 ", route1)
+    # print("parent2 ", route2)
+    routeSize = len(route1)
+    numberOfInheritedElements = int(routeSize / 2)
+    inheritedElements = [0] * routeSize
+    child1 = [-1] * routeSize
 
-import random
+    #child inherits elements from parent1
+    for i in range(0, numberOfInheritedElements):
+        randomNumber = random.randint(0, routeSize - 1)
+        child1[randomNumber] = route1[randomNumber]
+        inheritedElements[route1[randomNumber]] = 1
 
+    # print("after inherits from parent1")
+    # print("child1 ", child1)
+    # print("inheritedElements ", inheritedElements)
+    #remaining elemnts are donated by parent2
+    l = 0
+    for i in range(0, routeSize):
+        if child1[i] == -1:
+            while inheritedElements[route2[l]] == 1 and l < routeSize:
+                l += 1
+            child1[i] = route2[l]
+            l += 1
+    # print("child1 ", child1)
+    return child1
+# p1 = [2, 5, 1, 6, 4, 0, 8, 7, 3]
+# p2 = [3, 1, 7, 5, 8, 4, 0, 6, 2]
+# positionCrossover(p1, p2)
 
 def partiallyMappedCrossover(route1, route2):
     startSubstring = random.randint(1, (len(route1) - 3))
@@ -264,6 +292,14 @@ def generateChildrenPopulation(graph, parents, eliteSize, crossType):
                     break
                 elif parents[i] != parents[j]:
                     children.append(partiallyMappedCrossover(parents[i], parents[j]))
+                    numberOfGeneratedChildren += 1
+    if(crossType == 2):
+        for i in range(0, len(parents) - 1):
+            for j in range(i + 1, len(parents)):
+                if numberOfGeneratedChildren == len(parents) - eliteSize:
+                    break
+                elif parents[i] != parents[j]:
+                    children.append(positionCrossover(parents[i], parents[j]))
                     numberOfGeneratedChildren += 1
 
     # drugi sposób wyboru rodziców do krzyżowania
