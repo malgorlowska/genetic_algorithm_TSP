@@ -27,9 +27,10 @@ import read
 #     print("main.py analyze random <filename>")
 
 def main():
+     G = read.Graph("berlin52.tsp")
+     bestPath, prd, cost = geneticTSP.geneticTSP(G, 50, 6, 0.05, 200, 2, 0, 1)
 
-
-
+     '''''
      try:
           files = ["bays29.tsp", "berlin52.tsp", "eil76.tsp", "eil101.tsp", "lin105.tsp", "gr120.tsp"]
           populationList = [29]
@@ -82,5 +83,5 @@ def main():
 
      except:
           pass
-
+     '''''
 main()
