@@ -4,6 +4,7 @@ from graph import GenerateGraph
 import geneticTSP
 import readFile
 import read
+import math
 
 # if(sys.argv[1]=="generate"):
 #     if len(sys.argv)==6:
@@ -32,10 +33,13 @@ def main():
 
     try:
         files = ["bays29.tsp", "berlin52.tsp", "eil76.tsp", "eil101.tsp", "lin105.tsp", "gr120.tsp"]
-        populationList = [76]
-        eliteList = [25]
+        pop = 76
+        el = math.ceil(0.1*pop)
+        it=3*76
+        populationList = [pop]
+        eliteList = [el]
         mutationRateList = [0.03]
-        iterations = [150]
+        iterations = [it]
         muteTab = [0,1]
         crossTab = [0,1]
         selectTab = [0,1]

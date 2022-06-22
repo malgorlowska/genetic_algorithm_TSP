@@ -1,4 +1,4 @@
-
+import math
 import sys
 from graph import GenerateGraph
 import geneticTSP
@@ -32,10 +32,13 @@ def main():
 
     try:
         files = ["bays29.tsp", "berlin52.tsp", "eil76.tsp", "eil101.tsp", "lin105.tsp", "gr120.tsp"]
-        populationList = [105]
-        eliteList = [34]
-        mutationRateList = [0.03]
-        iterations = [150]
+        pop = 105
+        el = math.ceil(pop*0.1)
+        it = 3*pop
+        populationList = [pop]
+        eliteList = [el]
+        mutationRateList = [0.05]
+        iterations = [it]
         muteTab = [0,1]
         crossTab = [0,1]
         selectTab = [0,1]

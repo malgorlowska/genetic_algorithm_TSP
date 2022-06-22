@@ -5,7 +5,6 @@ import copy
 import time
 import os
 import psutil
-import geneticTSP
 
 class Graph:
     supported_formats = ['FULL_MATRIX', 'EUC_2D', 'LOWER_DIAG_ROW']
@@ -318,8 +317,6 @@ class Graph:
         self.extended_nearest_neighbor()
         print("Algorytm 2-OPT: ")
         self.two_opt()
-        print("genetic: ")
-        geneticTSP.geneticTSP(self.matrix, 10, 2, 0.02, 40)
 
 
 
